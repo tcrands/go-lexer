@@ -1,3 +1,7 @@
+//////////////////////////////////////////
+//////////// LEXICAL SCANNER /////////////
+//////////////////////////////////////////
+
 package main
 
 import (
@@ -12,39 +16,23 @@ type Scanner struct {
 	r *bufio.Reader
 }
 
+// Custom type to allow passing of rune checking functions
 type fn func(rune) bool
 
+// Array to haold the result
 var LexicalAnalyisResult [][]string
 
 // NewScanner returns a new instance of the scanner struct
+// @param r: The text to be scanned
 func NewScanner(r io.Reader) *Scanner {
 	return &Scanner{r: bufio.NewReader(r)}
 }
 
-// Scan returns the token and lit value
+// Scan returns the result of the scanning
+// @return LexicalAnalyisResult
 func (s *Scanner) Scan() [][]string {
 	// Peek at the next rune.
 	peekCh, _ := s.peek()
-
-	// Check if whitespace/string/int
-	// if isWhitespace(peekCh) {
-	// 	buffer := s.scanBuffer(isWhitespace, false)
-	// 	LexicalAnalyisResult = append(LexicalAnalyisResult, []string{WS, buffer})
-	// 	// s.scanWhitespace()
-	// } else if isLetter(peekCh) {
-	// 	// s.scanIdent()
-	// 	buffer := s.scanBuffer(isLetter, false)
-	// 	isKeyword(buffer)
-	// } else if isDigit(peekCh) {
-	// 	// return s.scanDigits()
-	// } else if isString(peekCh) {
-	// 	// s.scanString()
-	// 	buffer := s.scanBuffer(isString, true)
-	// 	LexicalAnalyisResult = append(LexicalAnalyisResult, []string{STRING, buffer})
-	// } else {
-	// 	ch := s.read()
-	// 	isSpecialChar(ch)
-	// }
 
 	switch {
 		case isWhitespace(peekCh):
@@ -54,7 +42,8 @@ func (s *Scanner) Scan() [][]string {
 			buffer := s.scanBuffer(isLetter, false)
 			isKeyword(buffer) 
 		case isDigit(peekCh):
-			// return s.scanDigits() 
+			// buffer := s.scanBuffer(isDigit, false)
+			// LexicalAnalyisResult = append(LexicalAnalyisResult, []string{DIGIT, buffer})
 		case isString(peekCh): 
 			buffer := s.scanBuffer(isString, true)
 			LexicalAnalyisResult = append(LexicalAnalyisResult, []string{STRING, buffer})
@@ -74,36 +63,37 @@ func (s *Scanner) Scan() [][]string {
 
 }
 
+// scanBuffer loop through the runes and build a token
+// @params f: The checking function to be used 
+// @params b: A boolean to check whether the token to be build uses a start and end indentifer
+// @return string: A string version of the token
 func (s *Scanner) scanBuffer(f fn, b bool) string {
 	// Create a buffer and read the current character into it.
 	var buf bytes.Buffer
 	buf.WriteRune(s.read())
 
-	//Keep looping and writing chars to buffer until char is not a int.
+	//Keep looping and writing chars to buffer until char is not what we want.
 	for {
 		if ch := s.read(); ch == eof {
 			break
 		} else if !f(ch) {
 			if b == true {
 				_, _ = buf.WriteRune(ch)
-				// break
 			} else {
 				s.unread()
 				break
 			}
 		} else {
 			_, _ = buf.WriteRune(ch)
-			if b == true {
-				break
-			}
+			if b == true { break }
 		}
 	}
 
 	return buf.String()
 }
 
-// read reads the next rune from the bufferred reader.
-// Returns the rune(0) if an error occurs (or io.EOF is returned).
+// read reads the next rune from the bufferred reader
+// @return rune: The next rune in the buffered reader
 func (s *Scanner) read() rune {
 	ch, _, err := s.r.ReadRune()
 	if err != nil {
@@ -112,7 +102,7 @@ func (s *Scanner) read() rune {
 	return ch
 }
 
-// Peeks at the rune from the buffered reader
+// peeks looks at the next rune from the buffered reader without progressing the reader
 func (s *Scanner) peek() (rune, bool) {
 	ch, _, err := s.r.ReadRune()
 	if err != nil {
@@ -127,84 +117,3 @@ func (s *Scanner) unread() { _ = s.r.UnreadRune() }
 
 // eof represents a marker rune for the end of the reader.
 var eof = rune(0)
-
-// func (s *Scanner) scanWhitespace() {
-// 	// Create a buffer and read the current character into it.
-// 	var buf bytes.Buffer
-// 	buf.WriteRune(s.read())
-//
-// 	//Keep looping and writing chars to buffer until char is not whitepace
-// 	for {
-// 		if ch := s.read(); ch == eof {
-// 			break
-// 		} else if !isWhitespace(ch) {
-// 			s.unread()
-// 			break
-// 		} else {
-// 			buf.WriteRune(ch)
-// 		}
-// 	}
-// 	// Return the buffer
-// 	LexicalAnalyisResult = append(LexicalAnalyisResult, []string{STRING, " "})
-// }
-//
-// func (s *Scanner) scanIdent() {
-// 	// Create a buffer and read the current character into it.
-// 	var buf bytes.Buffer
-// 	buf.WriteRune(s.read())
-//
-// 	//Keep looping and writing chars to buffer until char is not a letter.
-// 	for {
-// 		if ch := s.read(); ch == eof {
-// 			break
-// 		} else if !isLetter(ch) && ch != '_' {
-// 			s.unread()
-// 			break
-// 		} else {
-// 			_, _ = buf.WriteRune(ch)
-// 		}
-// 	}
-//
-// 	isKeyword(buf.String())
-// }
-//
-// func (s *Scanner) scanString() {
-// 	// Create a buffer and read the current character into it.
-// 	var buf bytes.Buffer
-// 	buf.WriteRune(s.read())
-//
-// 	//Keep looping and writing chars to buffer until char is not a letter.
-// 	for {
-// 		if ch := s.read(); ch == eof {
-// 			break
-// 		} else if isString(ch) {
-// 			_, _ = buf.WriteRune(ch)
-// 			break
-// 		} else {
-// 			_, _ = buf.WriteRune(ch)
-// 		}
-// 	}
-//
-// 	LexicalAnalyisResult = append(LexicalAnalyisResult, []string{STRING, buf.String()})
-// }
-
-func (s *Scanner) scanDigits() (tok Token, lit string) {
-	// Create a buffer and read the current character into it.
-	var buf bytes.Buffer
-	buf.WriteRune(s.read())
-
-	//Keep looping and writing chars to buffer until char is not a int.
-	for {
-		if ch := s.read(); ch == eof {
-			break
-		} else if !isDigit(ch) {
-			s.unread()
-			break
-		} else {
-			_, _ = buf.WriteRune(ch)
-		}
-	}
-
-	// Otherwise return as a regular identifier.
-	return DIGIT, buf.String()
-}
