@@ -100,7 +100,7 @@ func isSpecialChar(ch rune) {
 		LexicalAnalyisResult2 = append(LexicalAnalyisResult2, &item{item: EQUALS2, val: string(ch)})
 		LexicalAnalyisResult = append(LexicalAnalyisResult, []string{EQUALS, string(ch)})
 	case '\n':
-		LexicalAnalyisResult2 = append(LexicalAnalyisResult2, &item{item: NEWLINE2, val: "\\n"})
+		LexicalAnalyisResult2 = append(LexicalAnalyisResult2, &item{item: NEWLINE2, val: string(ch)})
 		LexicalAnalyisResult = append(LexicalAnalyisResult, []string{NEWLINE, "\\n"})
 	case '\t':
 		LexicalAnalyisResult2 = append(LexicalAnalyisResult2, &item{item: TAB2, val: string(ch)})

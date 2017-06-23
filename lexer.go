@@ -13,7 +13,8 @@ import (
 
 // Scanner struct
 type Scanner struct {
-	r *bufio.Reader
+	r     *bufio.Reader
+	items chan item
 }
 
 // Custom type to allow passing of rune checking functions
@@ -31,7 +32,10 @@ var LexicalAnalyisResult2 []*item
 // NewScanner returns a new instance of the scanner struct
 // @param r: The text to be scanned
 func NewScanner(r io.Reader) *Scanner {
-	return &Scanner{r: bufio.NewReader(r)}
+	return &Scanner{
+		r:     bufio.NewReader(r),
+		items: make(chan item),
+	}
 }
 
 // Scan returns the result of the scanning
@@ -65,7 +69,7 @@ func (s *Scanner) Scan() [][]string {
 		s.Scan()
 	} else {
 		fmt.Println(LexicalAnalyisResult)
-
+		//
 		for i := range LexicalAnalyisResult2 {
 			fmt.Println(LexicalAnalyisResult2[i].item)
 			fmt.Println(LexicalAnalyisResult2[i].val)
@@ -129,6 +133,11 @@ func (s *Scanner) peek() (rune, bool) {
 
 // unread places the previously read rune back on the reader.
 func (s *Scanner) unread() { _ = s.r.UnreadRune() }
+
+//Emit the token back to the client (Whoever calls the scanner)
+func (s *Scanner) emit(t itemType, v string) {
+	s.items <- item{item: t, val: v}
+}
 
 // eof represents a marker rune for the end of the reader.
 var eof = rune(0)
