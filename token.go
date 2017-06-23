@@ -3,7 +3,7 @@ package main
 // Token represents a lexical token.
 type Token string
 
-// type Token int
+type itemType int
 
 // const (
 // 	// Special tokens
@@ -20,38 +20,41 @@ type Token string
 // 	FUNCTION
 // )
 //
-// const (
-// 	// Special tokens
-// 	ILLEGAL Token = iota
-// 	EOF
-// 	WS
-// 	// Literals
-// 	IDENT
-// 	STRING
-// 	DIGIT
-// 	// Misc characters
-// 	ASTERISK
-// 	COMMA
-// 	OPENBRACKET
-// 	CLOSEBRACKET
-// 	OPENCURLYBRACKET
-// 	CLOSECURLYBRACKET
-// 	COLON
-// 	SEMICOLON
-// 	NEWLINE
-// 	TAB
-// 	// Keywords
-// 	FUNCTION
-// 	PARAMS
-// 	AS
-// 	SUB
-// 	END
-// 	IF
-// 	FOR
-// 	WHILE
-// 	RETURN
-// 	THIS
-// )
+const (
+	// Special tokens
+	ILLEGAL2 itemType = iota
+	EOF2
+	WS2
+	// Literals
+	IDENT2
+	STRING2
+	DIGIT2
+	// Misc characters
+	ASTERISK2
+	COMMA2
+	OPENBRACKET2
+	CLOSEBRACKET2
+	OPENCURLYBRACKET2
+	CLOSECURLYBRACKET2
+	COLON2
+	SEMICOLON2
+	NEWLINE2
+	TAB2
+	EQUALS2
+	UNDERSCORE2
+	DOT2
+	// Keywords
+	FUNCTION2
+	PARAMS2
+	AS2
+	SUB2
+	END2
+	IF2
+	FOR2
+	WHILE2
+	RETURN2
+	THIS2
+)
 
 const (
 	// Special tokens

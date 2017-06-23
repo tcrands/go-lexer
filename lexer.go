@@ -19,8 +19,14 @@ type Scanner struct {
 // Custom type to allow passing of rune checking functions
 type fn func(rune) bool
 
+type item struct {
+	item itemType
+	val  string
+}
+
 // Array to haold the result
 var LexicalAnalyisResult [][]string
+var LexicalAnalyisResult2 []*item
 
 // NewScanner returns a new instance of the scanner struct
 // @param r: The text to be scanned
@@ -35,21 +41,23 @@ func (s *Scanner) Scan() [][]string {
 	peekCh, _ := s.peek()
 
 	switch {
-		case isWhitespace(peekCh):
-			buffer := s.scanBuffer(isWhitespace, false)
-			LexicalAnalyisResult = append(LexicalAnalyisResult, []string{WS, buffer})
-		case isLetter(peekCh):
-			buffer := s.scanBuffer(isLetter, false)
-			isKeyword(buffer) 
-		case isDigit(peekCh):
-			// buffer := s.scanBuffer(isDigit, false)
-			// LexicalAnalyisResult = append(LexicalAnalyisResult, []string{DIGIT, buffer})
-		case isString(peekCh): 
-			buffer := s.scanBuffer(isString, true)
-			LexicalAnalyisResult = append(LexicalAnalyisResult, []string{STRING, buffer})
-		default:
-			ch := s.read()
-			isSpecialChar(ch) 
+	case isWhitespace(peekCh):
+		buffer := s.scanBuffer(isWhitespace, false)
+		LexicalAnalyisResult2 = append(LexicalAnalyisResult2, &item{item: WS2, val: buffer})
+		LexicalAnalyisResult = append(LexicalAnalyisResult, []string{WS, buffer})
+	case isLetter(peekCh):
+		buffer := s.scanBuffer(isLetter, false)
+		isKeyword(buffer)
+	case isDigit(peekCh):
+		// buffer := s.scanBuffer(isDigit, false)
+		// LexicalAnalyisResult = append(LexicalAnalyisResult, []string{DIGIT, buffer})
+	case isString(peekCh):
+		buffer := s.scanBuffer(isString, true)
+		LexicalAnalyisResult2 = append(LexicalAnalyisResult2, &item{item: STRING2, val: buffer})
+		LexicalAnalyisResult = append(LexicalAnalyisResult, []string{STRING, buffer})
+	default:
+		ch := s.read()
+		isSpecialChar(ch)
 	}
 
 	_, checkNext := s.peek()
@@ -57,6 +65,11 @@ func (s *Scanner) Scan() [][]string {
 		s.Scan()
 	} else {
 		fmt.Println(LexicalAnalyisResult)
+
+		for i := range LexicalAnalyisResult2 {
+			fmt.Println(LexicalAnalyisResult2[i].item)
+			fmt.Println(LexicalAnalyisResult2[i].val)
+		}
 	}
 
 	return LexicalAnalyisResult
@@ -64,7 +77,7 @@ func (s *Scanner) Scan() [][]string {
 }
 
 // scanBuffer loop through the runes and build a token
-// @params f: The checking function to be used 
+// @params f: The checking function to be used
 // @params b: A boolean to check whether the token to be build uses a start and end indentifer
 // @return string: A string version of the token
 func (s *Scanner) scanBuffer(f fn, b bool) string {
@@ -85,7 +98,9 @@ func (s *Scanner) scanBuffer(f fn, b bool) string {
 			}
 		} else {
 			_, _ = buf.WriteRune(ch)
-			if b == true { break }
+			if b == true {
+				break
+			}
 		}
 	}
 
