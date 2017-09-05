@@ -82,7 +82,7 @@ func (s *Scanner) Scan() [][]string {
 
 // scanBuffer loop through the runes and build a token
 // @params f: The checking function to be used
-// @params b: A boolean to check whether the token to be build uses a start and end indentifer
+// @params b: A boolean to check whether the token to be build uses a start and end indentifer. eg/ " <- for a string
 // @return string: A string version of the token
 func (s *Scanner) scanBuffer(f fn, b bool) string {
 	// Create a buffer and read the current character into it.

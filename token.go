@@ -1,25 +1,10 @@
 package main
 
-// Token represents a lexical token.
-type Token string
+// // Token represents a lexical token.
+// type Token string
 
 type itemType int
 
-// const (
-// 	// Special tokens
-// 	ILLEGAL Token = iota
-// 	EOF
-// 	WS
-// 	// Literals
-// 	IDENT // main
-// 	// Misc characters
-// 	ASTERISK // *
-// 	COMMA    // ,
-//
-// 	// KEYWORDS
-// 	FUNCTION
-// )
-//
 const (
 	// Special tokens
 	ILLEGAL2 itemType = iota
